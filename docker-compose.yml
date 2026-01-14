@@ -1,0 +1,14 @@
+services: 
+  web: 
+    image: tp-cesar:latest
+    expose: 
+      - "8000"
+  
+  reverse_proxy:
+    image: nginx:1.29-alpine
+    ports: 
+      - "8097:80"
+    volumes: 
+      - "./nginx/default.conf:/etc/nginx/conf.d/default.conf"
+    depends_on:
+      - web
