@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ave Cesar!</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+  <body class="bg-slate-100 p-8">
+    <h1 class="text-xl text-center font-mono font-bold text-slate-900">
+      Code césar
+    </h1>
+
+    {% with messages = get_flashed_messages(with_categories=False) %} 
+      {% if messages %} 
+      <ul
+        class="rounded-xl shadow-sm bg-red-100 p-4 font-mono text-red-800 font-semibold mt-5 border border-red-200">
+        {% for m in messages %}
+        <li class="items-center flex flex-row justify-start gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-xbox-x"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 21a9 9 0 0 0 9 -9a9 9 0 0 0 -9 -9a9 9 0 0 0 -9 9a9 9 0 0 0 9 9" /><path d="M9 8l6 8" /><path d="M15 8l-6 8" /></svg>
+          {{ m }}
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %} 
+    {% endwith %} 
+    
+    {% if result[0] %}
+    <div
+      class="rounded-xl shadow-sm bg-purple-100 p-4 font-mono text-purple-800 font-semibold mt-5 border border-purple-200">
+      <div class="text-xs">Résultat pour <i>{{result[0]}}</i> :</div>
+      <div>
+      {{ result[1] }}
+      </div>
+    </div>
+    {% endif %}
+
+    <form
+      action="{{ url_for('home') }}"
+      method="POST"
+      class="rounded-xl shadow-sm border border-gray-200 bg-white p-4 mt-5 grid grid-cols-2 gap-4">
+      <div class="col-span-full">
+        <label for="message" class="block text-sm/6 font-medium text-gray-900"
+          >Message à (dé)coder :</label
+        >
+        <div class="mt-2">
+          <textarea
+            id="message"
+            name="message"
+            rows="3"
+            class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300">{{default_values.message}}</textarea>
+        </div>
+        <p class="mt-3 text-sm/6 text-gray-600">Minimum 1 caractère</p>
+      </div>
+      <div>
+        <label for="key" class="block text-sm/6 font-medium text-gray-900"
+          >Clé</label
+        >
+        <div class="mt-2">
+          <input
+            id="key"
+            type="number"
+            value="{{default_values.key}}"
+            min="0"
+            name="key"
+            class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300" />
+        </div>
+      </div>
+
+      <div>
+        <label for="action" class="block text-sm/6 font-medium text-gray-900"
+          >Action</label
+        >
+        <div class="mt-2 grid grid-cols-1">
+          <select
+            id="action"
+            name="action"
+            class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300">
+            <option value="encode"{% if default_values.action == 'encode' %} selected{% endif %}>Chiffrer (normal vers césar)</option>
+            <option value="decode"{% if default_values.action == 'decode' %} selected{% endif %}>Déchiffrer (césar vers normal)</option>
+          </select>
+          <svg
+            viewBox="0 0 16 16"
+            fill="currentColor"
+            data-slot="icon"
+            aria-hidden="true"
+            class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4">
+            <path
+              d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
+              clip-rule="evenodd"
+              fill-rule="evenodd" />
+          </svg>
+        </div>
+      </div>
+      <div class="mt-6 flex items-center justify-center col-span-full gap-x-6">
+        <button
+          type="submit"
+          class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+          Let's go !
+        </button>
+        <div class="text-center text-gray-500 text-xs">
+          <a href="{{url_for('home')}}">Réinitialiser le formulaire</a>
+        </div>
+      </div>
+    </form>
+  </body>
+</html>
