@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+  <table class="w-full table-auto">
+    <thead>
+      <tr class="border-b border-gray-300 p-3">
+        <th>ID</th>
+        <th>Date de création</th>
+        <th>Action</th>
+        <th>Clé</th>
+        <th>Message original</th>
+        <th>Résultat</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200">
+       {% for entry in entries %}
+      <tr class="odd:bg-gray-50 even:bg-white">
+        <td class="text-center text-xs text-slate-500">#{{entry.id}}</td>
+        <td class="text-center">{{entry.created_at.strftime("%d/%m/%Y à %Hh%M")}}</td>
+        <td class="text-center">{{entry.action}}</td>
+        <td class="text-center">{{entry.key}}</td>
+        <td class="font-mono">{{entry.message}}</td>
+        <td class="font-mono">{{entry.result}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

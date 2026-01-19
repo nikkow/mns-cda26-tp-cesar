@@ -1,9 +1,35 @@
 from flask import Flask, render_template, request, flash
 from utils.cesar import cesar, decesar
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.secret_key = "super-mns-riz-crousty"
+# Configuration de SQLAlchemy
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://cesar:avecesar@localhost/cesar'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# Initialisation de SQLAlchemy (ORM)
+db = SQLAlchemy(app)
+
+# Défniition du modèle 
+class HistoryEntry(db.Model):
+    __tablename__ = 'history'
+
+    id = db.Column(db.Integer, primary_key=True)
+    action = db.Column(db.String(10), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    key = db.Column(db.Integer, nullable=False)
+    result = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    def __repr__(self):
+        return f"HistoryEntry('{self.action}', '{self.message}', '{self.key}', '{self.result}')"
+
+# Création de la table dans SQLite
+with app.app_context():
+  db.create_all()
+
+# Routes
 @app.route("/", methods=["GET", "POST"])
 def home():
   result = (None, None)
@@ -39,6 +65,11 @@ def home():
       else: 
         result = (message, decesar(message, key))
 
+      # Enregistrement dans la base de données
+      entry = HistoryEntry(action=action, message=message, key=key, result=result[1])
+      db.session.add(entry)
+      db.session.commit()
+      
     default_values = {
       "action": action, 
       "key": str(key),
@@ -46,6 +77,11 @@ def home():
     }
 
   return render_template("index.html", result=result, default_values=default_values)
+
+@app.route("/history")
+def history():
+  entries = HistoryEntry.query.all()
+  return render_template("history.html", entries=entries)
 
 if __name__ == "__main__":
   app.run(debug=True)

@@ -12,3 +12,18 @@ services:
       - "./nginx/default.conf:/etc/nginx/conf.d/default.conf"
     depends_on:
       - web
+
+  database: 
+    image: mysql:9.5
+    ports: 
+      - "3306:3306"
+    volumes: 
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: cesar
+      MYSQL_PASSWORD: avecesar
+      MYSQL_DATABASE: cesar
+
+volumes:
+  db_data: 

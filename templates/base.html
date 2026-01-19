@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ave Cesar!</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+  <body class="bg-slate-100 p-8">
+    <h1 class="text-xl text-center font-mono font-bold text-slate-900">
+      Code césar
+    </h1>
+
+    {% with messages = get_flashed_messages(with_categories=False) %} 
+      {% if messages %} 
+      <ul
+        class="rounded-xl shadow-sm bg-red-100 p-4 font-mono text-red-800 font-semibold mt-5 border border-red-200">
+        {% for m in messages %}
+        <li class="items-center flex flex-row justify-start gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-xbox-x"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 21a9 9 0 0 0 9 -9a9 9 0 0 0 -9 -9a9 9 0 0 0 -9 9a9 9 0 0 0 9 9" /><path d="M9 8l6 8" /><path d="M15 8l-6 8" /></svg>
+          {{ m }}
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %} 
+    {% endwith %} 
+    
+    <div class="rounded-xl shadow-sm border border-gray-200 bg-white p-4 {% if result and result[1] %}mt-20{% else %}mt-5{% endif %} grid grid-cols-1 gap-4">
+      {% block content %}{% endblock %}
+    </div>
+  </body>
+</html>
