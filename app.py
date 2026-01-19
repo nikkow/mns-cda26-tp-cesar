@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash
+from flask import Flask, render_template, request, flash, redirect, url_for
 from utils.cesar import cesar, decesar
 from flask_sqlalchemy import SQLAlchemy
 
@@ -6,12 +6,15 @@ app = Flask(__name__)
 app.secret_key = "super-mns-riz-crousty"
 # Configuration de SQLAlchemy
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://cesar:avecesar@localhost/cesar'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://:inmemory:'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialisation de SQLAlchemy (ORM)
 db = SQLAlchemy(app)
 
-# Défniition du modèle 
+# Définition du modèle 
 class HistoryEntry(db.Model):
     __tablename__ = 'history'
 
@@ -21,6 +24,12 @@ class HistoryEntry(db.Model):
     key = db.Column(db.Integer, nullable=False)
     result = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    def __init__(self, action: str, message: str, key: int, result: str):
+        self.action = action
+        self.message = message
+        self.key = key
+        self.result = result
 
     def __repr__(self):
         return f"HistoryEntry('{self.action}', '{self.message}', '{self.key}', '{self.result}')"
@@ -82,6 +91,20 @@ def home():
 def history():
   entries = HistoryEntry.query.all()
   return render_template("history.html", entries=entries)
+
+@app.route("/delete-history/<int:entry_id>")
+def delete_history(entry_id):
+  entry = HistoryEntry.query.get(entry_id)
+  if not entry:
+    flash("Entrée d'historique non trouvée", "error")
+    return redirect(url_for("history"))
+  
+  db.session.delete(entry)
+  db.session.commit()
+  
+  flash("Entrée d'historique supprimée avec succès", "success")
+  return redirect(url_for("history"))
+  
 
 if __name__ == "__main__":
   app.run(debug=True)
